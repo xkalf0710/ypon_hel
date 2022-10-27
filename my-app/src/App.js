@@ -1,4 +1,6 @@
 import { Component } from 'react';
+import CardList from './components/card-list/card-list.component';
+import SearchBox from './components/search-box/search-box.component';
 import './App.css';
 class App extends Component{
 
@@ -8,20 +10,17 @@ class App extends Component{
       monsters: [],
       searchField: '',
     };
-    console.log("constructor");
+    
   }
   // componentDidMount() is invoked immediately after a component is mounted (inserted into the tree). Initialization that requires DOM nodes should go here. If you need to load data from a remote endpoint, this is a good place to instantiate the network request.
  // componentDidMount() ashiglan database holboj bolnoo
 
   componentDidMount(){
-    console.log('componentDidMount');
+   
     fetch('https://jsonplaceholder.typicode.com/users')
     .then((response) => response.json())
     .then((users) => this.setState(()=> {
       return {monsters: users};
-    }, 
-    ()=> {
-      console.log(this.state);
     }));
   }
   onSearchChange = (event)=> {
@@ -32,7 +31,7 @@ class App extends Component{
   };
 
   render(){
-    console.log('render');
+    
     const { monsters, searchField } = this.state;
 
     const { onSearchChange } = this;
@@ -44,20 +43,10 @@ class App extends Component{
 
     return(
       <div className='App'> 
-      <input className='search-box' type='search' placeholder='search monsters' 
-      onChange={
-      onSearchChange
-      }/>
-      {/* mapping arrays to elements  */}
-        {filteredMonsters.map((monsters) => {
-           return (
-             <div key={monsters.id}>
-               <h1>{monsters.name}</h1> 
-               </div>
-           );
-        })
-        }
-        
+
+      <h1 className='app-title'>Monsters Rolodex</h1>
+         <SearchBox onChangeHandler={onSearchChange} placeholder='search monsters' className='monsters-search-box'/>
+         <CardList monsters={filteredMonsters}/>
       </div>
     );
   }
