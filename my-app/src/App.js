@@ -1,55 +1,52 @@
-import { Component } from 'react';
+// import { Component } from 'react';
 import CardList from './components/card-list/card-list.component';
 import SearchBox from './components/search-box/search-box.component';
+//useState => функц доторх төлөвийн хувьсагчийг зарлах боломжийг олгодог. 
+//Нэг useState() нь зөвхөн нэг төлөвийн хувьсагчийг зарлахад ашиглагдах боломжтой гэдгийг тэмдэглэх нь зүйтэй.
+//useEffect => useEffect нь дүрслэл болгон дээр ажилладаг. Энэ нь тоолуур солигдоход өөр нөлөө үзүүлэх рэндэр гарч ирнэ гэсэн үг.
+//Бид үргэлж массив авдаг хоёр дахь параметрийг оруулах ёстой. Сонголтоор бид энэ массив дахь useEffect-ийн хамаарлыг дамжуулж болно.
+
+import {useState, useEffect} from 'react';
+
 import './App.css';
-class App extends Component{
 
-  constructor(){
-    super();
-    this.state = {
-      monsters: [],
-      searchField: '',
-    };
-    
-  }
-  // componentDidMount() is invoked immediately after a component is mounted (inserted into the tree). Initialization that requires DOM nodes should go here. If you need to load data from a remote endpoint, this is a good place to instantiate the network request.
- // componentDidMount() ashiglan database holboj bolnoo
+const App = () => {
+  
+  const [searchField, setSearchField] = useState('a'); //value, setvalue 
+  const [monsters, setMonsters] = useState([]);
+  const [filteredMonsters, setFilteredMonsters] = useState(monsters);
+  
 
-  componentDidMount(){
-   
-    fetch('https://jsonplaceholder.typicode.com/users')
-    .then((response) => response.json())
-    .then((users) => this.setState(()=> {
-      return {monsters: users};
-    }));
-  }
-  onSearchChange = (event)=> {
-    const searchField = event.target.value.toLocaleLowerCase();
-    this.setState(() => {
-      return {searchField};
+  useEffect(() => {
+    console.log('effect fired');
+  fetch('https://jsonplaceholder.typicode.com/users')
+  .then((response) => response.json())
+  .then((users) => 
+  setMonsters(users));
+  }, []);
+
+
+  useEffect(() =>{
+    const newFilteredMonsters = monsters.filter((monster) => {
+      return monster.name.toLocaleLowerCase().includes(searchField);
     });
+    setFilteredMonsters(newFilteredMonsters);
+    console.log('effect is string');
+  }, [monsters, searchField]);
+
+  
+  const onSearchChange = (event) => {
+    const searchFieldString = event.target.value.toLocaleLowerCase();
+    setSearchField(searchFieldString);
   };
-
-  render(){
-    
-    const { monsters, searchField } = this.state;
-
-    const { onSearchChange } = this;
-
-
-    const filteredMonsters = monsters.filter((monsters)=> {
-      return monsters.name.toLocaleLowerCase().includes(searchField);
-     });
-
-    return(
-      <div className='App'> 
-
-      <h1 className='app-title'>Monsters Rolodex</h1>
-         <SearchBox onChangeHandler={onSearchChange} placeholder='search monsters' className='monsters-search-box'/>
-         <CardList monsters={filteredMonsters}/>
-      </div>
-    );
-  }
+  return (
+    <div className='App'> 
+        <h1 className='app-title'>Monsters Rolodex</h1>
+        <SearchBox className='monsters-search-box' onChangeHandler={onSearchChange} placeholder='search monsters'>
+        </SearchBox>
+       
+        <CardList monsters={filteredMonsters}/>
+    </div>
+  );
 }
-
 export default App;
